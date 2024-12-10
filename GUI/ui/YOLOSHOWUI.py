@@ -2004,7 +2004,7 @@ class Ui_MainWindow(object):
         self.closeButton.setText("")
         self.minimizeButton.setText("")
         self.maximizeButton.setText("")
-        self.title.setText(QCoreApplication.translate("MainWindow", u"YOLO SHOW -YOLO Graphical User Interface based on Pyside6", None))
+        self.title.setText(QCoreApplication.translate("MainWindow", u"Deep learning sitting posture detection based on multimodal datasets", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"YOLO SHOW", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"SwimmingLiu", None))
         self.src_menu.setText(QCoreApplication.translate("MainWindow", u" Menu   ", None))
