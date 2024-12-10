@@ -69,9 +69,9 @@ pose-detection/
 ```
 
 ## 模型下载
-- MediaPipe 模型：[下载链接](https://drive.google.com/...)
-- YOLOv8 模型：[下载链接](https://drive.google/...)
-- 剪枝蒸馏模型：[下载链接](https://drive.google.com/...)
+- MediaPipe 模型：[下载链接](https://raw.gitcode.com/open-source-toolkit/ef632/blobs/764b9cffcbd182c8acb21d734c4b2a0c7309adbe/mediapipe_tf_file.rar)
+- YOLOv8 模型：[下载链接](https://docs.ultralytics.com/models/yolov8/#supported-tasks-and-modes)
+- v8剪枝蒸馏模型：[下载链接](https://drive.google.com/...)
 
 ## 模型效果
 - 混淆矩阵
@@ -83,7 +83,7 @@ pose-detection/
 欢迎大家为项目做出贡献！如果你有好的功能建议、bug修复或优化方案，请提起一个 Pull Request 或 Issue。
 
 ## 许可协议
-本项目采用 MIT License。
+本项目采用 [MIT License]()。
 
 ## 致谢
 感谢开源社区提供的 MediaPipe 和 YOLOv8 模型，它们为本项目的实施提供了很大的帮助。
@@ -93,5 +93,13 @@ pose-detection/
 
 ### 更新说明：
 1. 数据集部分被详细列出，并展示了数据集结构。
-- 数据集当前已将开源：[数据集下载链接](https://drive.google.com/...)
+   - 数据集当前已在kaggle开源：
+     - [kaggle直链下载](https://storage.googleapis.com/kaggle-data-sets/6227602/10097754/bundle/archive.zip?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=gcp-kaggle-com%40kaggle-161607.iam.gserviceaccount.com%2F20241204%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20241204T101624Z&X-Goog-Expires=259200&X-Goog-SignedHeaders=host&X-Goog-Signature=42fae711ffd7af00659a7e45b273c9cff463e6c14924290d2d5cb144d3f5caa6eebd557c160a798526464f5f73c226133bd831a80c962a9f0a0fbe780ad2e0060e6feb0bdacf74c97b244681d771d73866d0db4bcf5ee9fccf2f4409fa772369cbd1f8ad606b138fc9983c5c40ef6520482330c1be2f28d999ecfa451d9a3f1552ca49a5d7bf45d07b4d6051c7b4bd1378f1acbf77307e1caaf2e7d909911d5db74381c40710c013ac1e54071f23a6a8ef3b10d36b7e3063010741e4a26c74a1b6d4a1ddf6fdc7f72926a365603acb32a9335ce2b64ee4ce76b63cfcbfca4385004a44af7300c7c3c67e4e043331c74896957fbfc67540022980927c58965b8a)
+     - kagglehub 下载
+     ```bash
+     import kagglehub
 
+     # Download latest version
+     path = kagglehub.dataset_download("xiaokonglong80/spd-yolo")
+  
+     print("Path to dataset files:", path)
