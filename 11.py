@@ -1,7 +1,7 @@
 import cv2
 
-url = 'rtsp://admin:1234@10.90.129.13:8554/live'
-
+url = 'rtsp://admin:1234@10.120.0.27:8554/live'
+# rtsp://admin:1234@10.90.128.196:8081/live
 cap = cv2.VideoCapture(url)
 
 while (cap.isOpened()):

@@ -1,6 +1,6 @@
 {
-  "iou": 0.28,
-  "conf": 0.27,
-  "delay": 6,
+  "iou": 0.01,
+  "conf": 0.71,
+  "delay": 4,
   "line_thickness": 1.0
 }

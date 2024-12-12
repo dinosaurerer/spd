@@ -26,13 +26,8 @@ from IPython.display import display
 import cv2
 from utils import glo
 
-try:
-    import ultralytics
-    assert hasattr(ultralytics, "__version__")  # verify package is not directory
-except (ImportError, AssertionError):
-    import os
-    os.system("pip install -U ultralytics")
-    import ultralytics
+
+import ultralytics
 
 yoloname = glo.get_value('yoloname')
 yoloname1 = glo.get_value('yoloname1')

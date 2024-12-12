@@ -8,6 +8,8 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 
+from ultralytics.nn.attention.MSCA import MSCAAttention
+
 from ultralytics.nn.modules import (
     AIFI,
     C1,
@@ -334,9 +336,9 @@ class DetectionModel(BaseModel):
     def _clip_augmented(self, y):
         """Clip YOLO augmented inference tails."""
         nl = self.model[-1].nl  # number of detection layers (P3-P5)
-        g = sum(4**x for x in range(nl))  # grid points
+        g = sum(4 ** x for x in range(nl))  # grid points
         e = 1  # exclude layer count
-        i = (y[0].shape[-1] // g) * sum(4**x for x in range(e))  # indices
+        i = (y[0].shape[-1] // g) * sum(4 ** x for x in range(e))  # indices
         y[0] = y[0][..., :-i]  # large
         i = (y[-1].shape[-1] // g) * sum(4 ** (nl - 1 - x) for x in range(e))  # indices
         y[-1] = y[-1][..., i:]  # small
@@ -625,9 +627,11 @@ class WorldModel(DetectionModel):
                     return torch.unbind(torch.cat(embeddings, 1), dim=0)
         return x
 
+
 class YOLOv10DetectionModel(DetectionModel):
     def init_criterion(self):
         return v10DetectLoss(self)
+
 
 class Ensemble(nn.ModuleList):
     """Ensemble of models."""
@@ -708,11 +712,11 @@ def torch_safe_load(weight):
     file = attempt_download_asset(weight)  # search online if missing locally
     try:
         with temporary_modules(
-            {
-                "ultralytics.yolo.utils": "ultralytics.utils",
-                "ultralytics.yolo.v8": "ultralytics.models.yolo",
-                "ultralytics.yolo.data": "ultralytics.data",
-            }
+                {
+                    "ultralytics.yolo.utils": "ultralytics.utils",
+                    "ultralytics.yolo.v8": "ultralytics.models.yolo",
+                    "ultralytics.yolo.data": "ultralytics.data",
+                }
         ):  # for legacy 8.0 Classify and Pose models
             if "yolov10" in file:
                 # 确保正确导入模块
@@ -849,28 +853,28 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
 
         n = n_ = max(round(n * depth), 1) if n > 1 else n  # depth gain
         if m in (
-            Classify,
-            Conv,
-            ConvTranspose,
-            GhostConv,
-            Bottleneck,
-            GhostBottleneck,
-            SPP,
-            SPPF,
-            DWConv,
-            Focus,
-            BottleneckCSP,
-            C1,
-            C2,
-            C2f,
-            C2fAttn,
-            C3,
-            C3TR,
-            C3Ghost,
-            nn.ConvTranspose2d,
-            DWConvTranspose2d,
-            C3x,
-            RepC3,
+                Classify,
+                Conv,
+                ConvTranspose,
+                GhostConv,
+                Bottleneck,
+                GhostBottleneck,
+                SPP,
+                SPPF,
+                DWConv,
+                Focus,
+                BottleneckCSP,
+                C1,
+                C2,
+                C2f,
+                C2fAttn,
+                C3,
+                C3TR,
+                C3Ghost,
+                nn.ConvTranspose2d,
+                DWConvTranspose2d,
+                C3x,
+                RepC3,
         ):
             c1, c2 = ch[f], args[0]
             if c2 != nc:  # if c2 not equal to number of classes (i.e. for Classify() output)
@@ -887,6 +891,11 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
                 n = 1
         elif m is AIFI:
             args = [ch[f], *args]
+        ###### attention     ######
+        elif m is MSCAAttention:
+            c2 = ch[f]
+            args = [c2, *args]
+        ###### attention     ######
         elif m in (HGStem, HGBlock):
             c1, cm, c2 = ch[f], args[0], args[1]
             args = [c1, cm, c2, *args[2:]]
