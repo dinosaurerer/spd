@@ -5,7 +5,7 @@ from ui.YOLOSHOWUI import Ui_MainWindow
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QFileDialog, QMainWindow
 from yoloshow.YOLOThreadPool import YOLOThreadPool
-from PySide6.QtCore import QTimer, Qt
+from PySide6.QtCore import QTimer, Qt, QPropertyAnimation, QEasingCurve
 from PySide6 import QtCore, QtGui
 from yoloshow.YOLOSHOWBASE import YOLOSHOWBASE, MODEL_THREAD_CLASSES
 
@@ -54,11 +54,6 @@ class YOLOSHOW(QMainWindow, YOLOSHOWBASE):
         self.ui.run_button.setIcon(self.playIcon)
         # --- 播放 暂停 停止 --- #
 
-        # --- 侧边栏缩放 --- #
-        self.ui.src_menu.clicked.connect(self.scaleMenu)  # hide menu button
-        self.ui.src_setting.clicked.connect(self.scalSetting)  # setting button
-        # --- 侧边栏缩放 --- #
-
         # --- 自动加载/动态改变 PT 模型 --- #
         self.pt_Path = f"{self.current_workpath}/ptfiles/"
         os.makedirs(self.pt_Path, exist_ok=True)
@@ -83,10 +78,10 @@ class YOLOSHOW(QMainWindow, YOLOSHOWBASE):
         # --- 导入 图片/视频、调用摄像头、导入文件夹（批量处理）、调用网络摄像头 --- #
 
         # --- 导入模型、 导出结果 --- #
-        self.ui.import_button.clicked.connect(self.importModel)
-        self.ui.save_status_button.clicked.connect(self.saveStatus)
+        # self.ui.import_button.clicked.connect(self.importModel)
+        # self.ui.save_status_button.clicked.connect(self.saveStatus)
         self.ui.save_button.clicked.connect(self.saveResult)
-        self.ui.save_button.setEnabled(False)
+        self.ui.save_button.setEnabled(True)
         # --- 导入模型、 导出结果 --- #
 
         # --- 视频、图片 预览 --- #
@@ -247,7 +242,7 @@ class YOLOSHOW(QMainWindow, YOLOSHOWBASE):
             self.showStatus('Pause Detection')
 
     def runModel(self, runbuttonStatus=None):
-        self.ui.save_status_button.setEnabled(False)
+        # self.ui.save_status_button.setEnabled(False)
         if runbuttonStatus:
             self.ui.run_button.setChecked(True)
         current_model_name = self.checkCurrentModel()
@@ -271,7 +266,6 @@ class YOLOSHOW(QMainWindow, YOLOSHOWBASE):
     def stopDetect(self):
         self.quitRunningModel(stop_status=True)
         self.ui.run_button.setChecked(False)
-        self.ui.save_status_button.setEnabled(True)
         self.ui.progress_bar.setValue(0)
         self.ui.main_leftbox.clear()  # clear image display
         self.ui.main_rightbox.clear()

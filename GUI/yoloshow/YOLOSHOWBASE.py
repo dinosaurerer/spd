@@ -27,50 +27,50 @@ import importlib
 from ui.utils.rtspDialog import CustomMessageBox
 from models import common, yolo, experimental
 from ui.utils.webCamera import Camera, WebcamThread
-from yolocode.yolov5.YOLOv5Thread import YOLOv5Thread
-from yolocode.yolov7.YOLOv7Thread import YOLOv7Thread
+# from yolocode.yolov5.YOLOv5Thread import YOLOv5Thread
+# from yolocode.yolov7.YOLOv7Thread import YOLOv7Thread
 from yolocode.yolov8.YOLOv8Thread import YOLOv8Thread
-from yolocode.yolov9.YOLOv9Thread import YOLOv9Thread
-from yolocode.yolov5.YOLOv5SegThread import YOLOv5SegThread
+# from yolocode.yolov9.YOLOv9Thread import YOLOv9Thread
+# from yolocode.yolov5.YOLOv5SegThread import YOLOv5SegThread
 from yolocode.yolov8.YOLOv8SegThread import YOLOv8SegThread
-from yolocode.rtdetr.RTDETRThread import RTDETRThread
+# from yolocode.rtdetr.RTDETRThread import RTDETRThread
 from yolocode.yolov8.YOLOv8PoseThread import YOLOv8PoseThread
 from yolocode.yolov8.YOLOv8ObbThread import YOLOv8ObbThread
-from yolocode.yolov10.YOLOv10Thread import YOLOv10Thread
+# from yolocode.yolov10.YOLOv10Thread import YOLOv10Thread
 from yolocode.yolov11.YOLOv11Thread import YOLOv11Thread
 from yolocode.yolov11.YOLOv11SegThread import YOLOv11SegThread
 from yolocode.yolov11.YOLOv11ObbThread import YOLOv11ObbThread
 from yolocode.yolov11.YOLOv11PoseThread import YOLOv11PoseThread
-from yolocode.fastsam.FastSAMThread import FastSAMThread
-from yolocode.sam.SAMThread import SAMThread
-from yolocode.sam.SAMv2Thread import SAMv2Thread
+# from yolocode.fastsam.FastSAMThread import FastSAMThread
+# from yolocode.sam.SAMThread import SAMThread
+# from yolocode.sam.SAMv2Thread import SAMv2Thread
 
 GLOBAL_WINDOW_STATE = True
-WIDTH_LEFT_BOX_STANDARD = 80
+WIDTH_LEFT_BOX_STANDARD = 180
 WIDTH_LEFT_BOX_EXTENDED = 200
-WIDTH_SETTING_BAR = 300
+WIDTH_SETTING_BAR = 290
 WIDTH_LOGO = 60
 WINDOW_SPLIT_BODY = 20
 KEYS_LEFT_BOX_MENU = ['src_menu', 'src_setting', 'src_webcam', 'src_folder', 'src_camera', 'src_vsmode', 'src_setting']
 # 模型名称和线程类映射
 MODEL_THREAD_CLASSES = {
-    "yolov5": YOLOv5Thread,
-    "yolov7": YOLOv7Thread,
+    # "yolov5": YOLOv5Thread,
+    # "yolov7": YOLOv7Thread,
     "yolov8": YOLOv8Thread,
-    "yolov9": YOLOv9Thread,
-    "yolov10": YOLOv10Thread,
+    # "yolov9": YOLOv9Thread,
+    # "yolov10": YOLOv10Thread,
     "yolov11": YOLOv11Thread,
-    "rtdetr": RTDETRThread,
-    "yolov5-seg": YOLOv5SegThread,
+    # "rtdetr": RTDETRThread,
+    # "yolov5-seg": YOLOv5SegThread,
     "yolov8-seg": YOLOv8SegThread,
     "yolov11-seg": YOLOv11SegThread,
     "yolov8-pose": YOLOv8PoseThread,
     "yolov11-pose": YOLOv11PoseThread,
     "yolov8-obb": YOLOv8ObbThread,
     "yolov11-obb": YOLOv11ObbThread,
-    "fastsam": FastSAMThread,
-    "sam": SAMThread,
-    "samv2": SAMv2Thread
+    # "fastsam": FastSAMThread,
+    # "sam": SAMThread,
+    # "samv2": SAMv2Thread
 }
 # 扩展MODEL_THREAD_CLASSES字典
 MODEL_NAME_DICT = list(MODEL_THREAD_CLASSES.items())
@@ -575,11 +575,11 @@ class YOLOSHOWBASE:
             self.quitRunningModel()
             self.ui.run_button.setChecked(False)
             self.ui.progress_bar.setValue(0)
-            self.ui.save_status_button.setEnabled(True)
+            # self.ui.save_status_button.setEnabled(True)
         elif msg == 'Stop Detection':
             self.quitRunningModel()
             self.ui.run_button.setChecked(False)
-            self.ui.save_status_button.setEnabled(True)
+            # self.ui.save_status_button.setEnabled(True)
             self.ui.progress_bar.setValue(0)
             self.ui.main_leftbox.clear()  # clear image display
             self.ui.main_rightbox.clear()
@@ -589,16 +589,9 @@ class YOLOSHOWBASE:
 
     # 导出结果状态判断
     def saveStatus(self):
-        if self.ui.save_status_button.checkState() == Qt.CheckState.Unchecked:
-            self.showStatus('NOTE: Run image results are not saved.')
-            for yolo_thread in self.yolo_threads.threads_pool.values():
-                yolo_thread.save_res = False
-            self.ui.save_button.setEnabled(False)
-        elif self.ui.save_status_button.checkState() == Qt.CheckState.Checked:
-            self.showStatus('NOTE: Run image results will be saved.')
-            for yolo_thread in self.yolo_threads.threads_pool.values():
-                yolo_thread.save_res = True
-            self.ui.save_button.setEnabled(True)
+        self.showStatus('NOTE: Run image results will be saved.')
+        for yolo_thread in self.yolo_threads.threads_pool.values():
+            yolo_thread.save_res = True
 
     # 导出检测结果 --- 过程代码
     def saveResultProcess(self, outdir, current_model_name, folder):
