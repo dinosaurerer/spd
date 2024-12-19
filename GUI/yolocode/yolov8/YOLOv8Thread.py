@@ -112,6 +112,7 @@ class YOLOv8Thread(QThread):
                 self.detect(is_folder_last=is_folder_last)
         else:
             self.setup_source(source)
+            self.send_progress.emit(100)
             self.detect()
 
     @torch.no_grad()
@@ -129,7 +130,8 @@ class YOLOv8Thread(QThread):
                 if self.is_folder and not is_folder_last:
                     break
                 self.send_msg.emit('Stop Detection')
-
+                if self.webcam:
+                    self.send_msg.emit('Stop Detection and Results Saved')
                 # --- 发送图片和表格结果 --- #
                 self.send_result_picture.emit(self.results_picture)  # 发送图片结果
                 for key, value in self.results_picture.items():
@@ -175,8 +177,11 @@ class YOLOv8Thread(QThread):
                     self.send_msg.emit("Detecting: {}".format(self.source))
                 self.batch = next(datasets)
                 path, im0s, s = self.batch
+
                 self.vid_cap = self.dataset.cap if self.dataset.mode == "video" else None
+
                 # 原始图片送入 input框
+
                 self.send_input.emit(im0s if isinstance(im0s, np.ndarray) else im0s[0])
                 count += 1
                 percent = 0  # 进度条
@@ -184,7 +189,6 @@ class YOLOv8Thread(QThread):
                 if self.vid_cap:
                     if self.vid_cap.get(cv2.CAP_PROP_FRAME_COUNT) > 0:
                         percent = int(count / self.vid_cap.get(cv2.CAP_PROP_FRAME_COUNT) * self.progress_value)
-                        print(percent)
                         self.send_progress.emit(percent)
                     else:
                         percent = 100
@@ -194,12 +198,15 @@ class YOLOv8Thread(QThread):
                 if count % 5 == 0 and count >= 5:  # Calculate the frame rate every 5 frames
                     self.send_fps.emit(str(int(5 / (time.time() - start_time))))
                     start_time = time.time()
+
                 # Preprocess
                 with self.dt[0]:
                     im = self.preprocess(im0s)
+
                 # Inference
                 with self.dt[1]:
                     preds = self.inference(im)
+
                 # Postprocess
                 with self.dt[2]:
                     self.results = self.postprocess(preds, im, im0s)
@@ -275,7 +282,7 @@ class YOLOv8Thread(QThread):
                     break
 
                 if percent == self.progress_value and not self.webcam:
-                    self.send_progress.emit(0)
+                    self.send_progress.emit(100)
                     self.send_msg.emit('Finish Detection')
                     # --- 发送图片和表格结果 --- #
                     self.send_result_picture.emit(self.results_picture)  # 发送图片结果
