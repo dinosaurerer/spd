@@ -48,6 +48,7 @@ class YOLOv8Thread(QThread):
         self.conf_thres = 0.25  # conf
         self.speed_thres = 10  # delay, ms
         self.labels_dict = {}  # return a dictionary of results
+        self.all_labels_dict = {}  # return a dictionary of all results(only for video)
         self.progress_value = 0  # progress bar
         self.res_status = False  # result status
         self.parent_workpath = None  # parent work path
@@ -128,6 +129,7 @@ class YOLOv8Thread(QThread):
                 if self.is_folder and not is_folder_last:
                     break
                 self.send_msg.emit('Stop Detection')
+
                 # --- 发送图片和表格结果 --- #
                 self.send_result_picture.emit(self.results_picture)  # 发送图片结果
                 for key, value in self.results_picture.items():
@@ -137,6 +139,7 @@ class YOLOv8Thread(QThread):
                 self.results_table = list()
                 # --- 发送图片和表格结果 --- #
                 # 释放资源
+                self.all_labels_dict = {}
                 self.dataset.running = False  # stop flag for Thread
                 # 判断self.dataset里面是否有threads
                 if hasattr(self.dataset, 'threads'):
@@ -153,7 +156,8 @@ class YOLOv8Thread(QThread):
                 if isinstance(self.vid_writer[-1], cv2.VideoWriter):
                     self.vid_writer[-1].release()
                 break
-                #  判断是否更换模型
+
+            #  判断是否更换模型
             if self.current_model_name != self.new_model_name:
                 self.send_msg.emit('Loading Model: {}'.format(os.path.basename(self.new_model_name)))
                 self.setup_model(self.new_model_name)
@@ -180,6 +184,7 @@ class YOLOv8Thread(QThread):
                 if self.vid_cap:
                     if self.vid_cap.get(cv2.CAP_PROP_FRAME_COUNT) > 0:
                         percent = int(count / self.vid_cap.get(cv2.CAP_PROP_FRAME_COUNT) * self.progress_value)
+                        print(percent)
                         self.send_progress.emit(percent)
                     else:
                         percent = 100
@@ -200,6 +205,7 @@ class YOLOv8Thread(QThread):
                     self.results = self.postprocess(preds, im, im0s)
 
                 n = len(im0s)
+
                 for i in range(n):
                     self.seen += 1
                     self.results[i].speed = {
@@ -207,6 +213,7 @@ class YOLOv8Thread(QThread):
                         "inference": self.dt[1].dt * 1e3 / n,
                         "postprocess": self.dt[2].dt * 1e3 / n,
                     }
+
                     p, im0 = path[i], None if self.source_type.tensor else im0s[i].copy()
                     self.file_path = p = Path(p)
 
@@ -235,11 +242,24 @@ class YOLOv8Thread(QThread):
                             else:  # 第一次出现的类别
                                 self.labels_dict[label_name] = int(nums)
 
+                    if self.webcam:
+                        # labels_dict 加入到 all_labels_dict
+                        for key, value in self.labels_dict.items():
+                            if key in self.all_labels_dict:
+                                self.all_labels_dict[key] += value
+                            else:
+                                self.all_labels_dict[key] = value
+
+
                     # Send test results
                     self.send_output.emit(self.plotted_img)  # after detection
                     self.send_class_num.emit(class_nums)
                     self.send_target_num.emit(target_nums)
-                    self.results_picture = self.labels_dict
+
+                    if self.webcam:
+                        self.results_picture = self.all_labels_dict
+                    else:
+                        self.results_picture = self.labels_dict
 
                     if self.save_res:
                         save_path = str(self.save_path / p.name)  # im.jpg
@@ -271,6 +291,7 @@ class YOLOv8Thread(QThread):
                     if isinstance(self.vid_writer[-1], cv2.VideoWriter):
                         self.vid_writer[-1].release()  # release final video writer
                     break
+
 
     def setup_model(self, model, verbose=True):
         """Initialize YOLO model with given parameters and set it to evaluation mode."""

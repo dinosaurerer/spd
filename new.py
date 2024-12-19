@@ -267,7 +267,7 @@ class Ui_MainWindow(object):
         self.logo.setSizePolicy(sizePolicy)
         self.logo.setMinimumSize(QSize(60, 60))
         self.logo.setMaximumSize(QSize(60, 60))
-        self.logo.setStyleSheet(u"image: url(:/leftbox/icon.png);\n"
+        self.logo.setStyleSheet(u"image: url(:/leftbox/yoloshow.png);\n"
 "border:2px solid rgba(0,0,0,15%);\n"
 "border-radius: 15%;\n"
 "")

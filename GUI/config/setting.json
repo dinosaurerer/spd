@@ -2,5 +2,5 @@
   "iou": 0.5,
   "conf": 0.25,
   "delay": 4,
-  "line_thickness": 5.0
+  "line_thickness": 2.0
 }
