@@ -23,7 +23,7 @@ class SplashScreen(QLabel):
         self.setAlignment(Qt.AlignCenter)  # 居中对齐
         self.setPixmap(QPixmap("images/icon.png"))  # 设置Logo图片
         self.setStyleSheet("background-color: white;")  # 设置背景色
-        self.resize(640, 480)  # 设置窗口大小
+        self.resize(600, 400)  # 设置窗口大小
 
 
 if __name__ == '__main__':
