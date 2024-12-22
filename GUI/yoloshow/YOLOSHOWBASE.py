@@ -27,23 +27,13 @@ import importlib
 from ui.utils.rtspDialog import CustomMessageBox
 from models import common, yolo, experimental
 from ui.utils.webCamera import Camera, WebcamThread
-# from yolocode.yolov5.YOLOv5Thread import YOLOv5Thread
-# from yolocode.yolov7.YOLOv7Thread import YOLOv7Thread
 from yolocode.yolov8.YOLOv8Thread import YOLOv8Thread
-# from yolocode.yolov9.YOLOv9Thread import YOLOv9Thread
-# from yolocode.yolov5.YOLOv5SegThread import YOLOv5SegThread
 from yolocode.yolov8.YOLOv8SegThread import YOLOv8SegThread
-# from yolocode.rtdetr.RTDETRThread import RTDETRThread
 from yolocode.yolov8.YOLOv8PoseThread import YOLOv8PoseThread
-from yolocode.yolov8.YOLOv8ObbThread import YOLOv8ObbThread
-# from yolocode.yolov10.YOLOv10Thread import YOLOv10Thread
 from yolocode.yolov11.YOLOv11Thread import YOLOv11Thread
 from yolocode.yolov11.YOLOv11SegThread import YOLOv11SegThread
-from yolocode.yolov11.YOLOv11ObbThread import YOLOv11ObbThread
 from yolocode.yolov11.YOLOv11PoseThread import YOLOv11PoseThread
-# from yolocode.fastsam.FastSAMThread import FastSAMThread
-# from yolocode.sam.SAMThread import SAMThread
-# from yolocode.sam.SAMv2Thread import SAMv2Thread
+
 
 GLOBAL_WINDOW_STATE = True
 WIDTH_LEFT_BOX_STANDARD = 180
@@ -54,23 +44,12 @@ WINDOW_SPLIT_BODY = 20
 KEYS_LEFT_BOX_MENU = ['src_menu', 'src_setting', 'src_webcam', 'src_folder', 'src_camera', 'src_vsmode', 'src_setting']
 # 模型名称和线程类映射
 MODEL_THREAD_CLASSES = {
-    # "yolov5": YOLOv5Thread,
-    # "yolov7": YOLOv7Thread,
     "yolov8": YOLOv8Thread,
-    # "yolov9": YOLOv9Thread,
-    # "yolov10": YOLOv10Thread,
     "yolov11": YOLOv11Thread,
-    # "rtdetr": RTDETRThread,
-    # "yolov5-seg": YOLOv5SegThread,
     "yolov8-seg": YOLOv8SegThread,
     "yolov11-seg": YOLOv11SegThread,
     "yolov8-pose": YOLOv8PoseThread,
     "yolov11-pose": YOLOv11PoseThread,
-    "yolov8-obb": YOLOv8ObbThread,
-    "yolov11-obb": YOLOv11ObbThread,
-    # "fastsam": FastSAMThread,
-    # "sam": SAMThread,
-    # "samv2": SAMv2Thread
 }
 # 扩展MODEL_THREAD_CLASSES字典
 MODEL_NAME_DICT = list(MODEL_THREAD_CLASSES.items())
@@ -78,8 +57,7 @@ for key, value in MODEL_NAME_DICT:
     MODEL_THREAD_CLASSES[f"{key}_left"] = value
     MODEL_THREAD_CLASSES[f"{key}_right"] = value
 
-ALL_MODEL_NAMES = ["yolov5", "yolov7", "yolov8", "yolov9", "yolov10", "yolov11", "yolov5-seg", "yolov8-seg", "rtdetr",
-                   "yolov8-pose", "yolov8-obb", "fastsam", "sam", "samv2"]
+ALL_MODEL_NAMES = ["yolov5", "yolov8", "yolov11"]
 loggertool = LoggerUtils()
 
 
@@ -300,21 +278,22 @@ class YOLOSHOWBASE:
             # get the number of local cameras
             cam_num, cams = Camera().get_cam_num()
             if cam_num > 0:
-                popMenu = RoundMenu(parent=self)
-                popMenu.setFixedWidth(self.ui.leftbox_bottom.width())
-                actions = []
+                # popMenu = RoundMenu(parent=self)
+                # popMenu.setFixedWidth(self.ui.leftbox_bottom.width())
+                # actions = []
 
-                for cam in cams:
-                    cam_name = f'Camera_{cam}'
-                    actions.append(Action(cam_name))
-                    popMenu.addAction(actions[-1])
-                    actions[-1].triggered.connect(lambda: self.actionWebcam(cam))
+                cam = cams[0]
+                # cam_name = f'Camera_{cam}'
+                # actions.append(Action(cam_name))
+                # popMenu.addAction(actions[-1])
+                # actions[-1].triggered.connect(lambda: self.actionWebcam(cam))
+                self.actionWebcam(cam)
 
-                x = self.ui.webcamBox.mapToGlobal(self.ui.webcamBox.pos()).x()
-                y = self.ui.webcamBox.mapToGlobal(self.ui.webcamBox.pos()).y()
-                y = y - self.ui.webcamBox.frameGeometry().height() * 2
-                pos = QPoint(x, y)
-                popMenu.exec(pos, aniType=MenuAnimationType.DROP_DOWN)
+                # x = self.ui.webcamBox.mapToGlobal(self.ui.webcamBox.pos()).x()
+                # y = self.ui.webcamBox.mapToGlobal(self.ui.webcamBox.pos()).y()
+                # y = y - self.ui.webcamBox.frameGeometry().height() * 2
+                # pos = QPoint(x, y)
+                # popMenu.exec(pos, aniType=MenuAnimationType.DROP_DOWN)
             else:
                 self.showStatus('No camera found !!!')
         except Exception as e:
@@ -669,6 +648,12 @@ class YOLOSHOWBASE:
         importlib.reload(common)
         importlib.reload(yolo)
         importlib.reload(experimental)
+
+
+    def use_mp(self, use_mp):
+        # print(f"use_mp: {use_mp}")
+        for yolo_thread in self.yolo_threads.threads_pool.values():
+            yolo_thread.use_mp = use_mp
 
     # 调整超参数
     def changeValue(self, x, flag):

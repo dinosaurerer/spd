@@ -1375,7 +1375,7 @@ QFrame#main_rightbox{
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap resource="YOLOSHOWUI.qrc">:/statusbar/images/newsize/classesBar.png</pixmap>
+                      <pixmap>:/statusbar/images/newsize/classesBar.png</pixmap>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -1615,7 +1615,7 @@ font: 17pt &quot;Microsoft YaHei UI&quot;;</string>
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap resource="YOLOSHOWUI.qrc">:/statusbar/images/newsize/targetBar.png</pixmap>
+                      <pixmap>:/statusbar/images/newsize/targetBar.png</pixmap>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -1855,7 +1855,7 @@ font: 17pt &quot;Microsoft YaHei UI&quot;;</string>
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap resource="YOLOSHOWUI.qrc">:/statusbar/images/newsize/fpsBar.png</pixmap>
+                      <pixmap>:/statusbar/images/newsize/fpsBar.png</pixmap>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -2101,7 +2101,7 @@ font: 17pt &quot;Microsoft YaHei UI&quot;;</string>
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap resource="YOLOSHOWUI.qrc">:/statusbar/images/newsize/modelBar.png</pixmap>
+                      <pixmap>:/statusbar/images/newsize/modelBar.png</pixmap>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -2370,7 +2370,7 @@ QPushButton:hover{
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="YOLOSHOWUI.qrc">
+                   <iconset>
                     <normaloff>:/rightbox/images/newsize/play.png</normaloff>:/rightbox/images/newsize/play.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -2780,6 +2780,82 @@ ComboBox::down-arrow:on {
                     </widget>
                    </item>
                   </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QWidget" name="widget_10" native="true">
+                  <property name="minimumSize">
+                   <size>
+                    <width>260</width>
+                    <height>90</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>260</width>
+                    <height>90</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QWidget#widget_10{
+border:2px solid rgba(255, 255, 255, 70);
+border-radius:15px;
+}</string>
+                  </property>
+                  <widget class="QPushButton" name="mp_button">
+                   <property name="geometry">
+                    <rect>
+                     <x>20</x>
+                     <y>10</y>
+                     <width>150</width>
+                     <height>40</height>
+                    </rect>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>100</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <family>Nirmala UI</family>
+                     <pointsize>13</pointsize>
+                     <italic>false</italic>
+                     <bold>true</bold>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>false</bool>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">QPushButton{
+	background-repeat: no-repeat;
+	background-position: left center;
+	border: none;	
+	text-align: left;
+	padding-left: 40px;
+	padding-bottom: 4px;
+	color: white;
+	font: 700 13pt &quot;Nirmala UI&quot;;
+}
+QPushButton:hover{
+	background-color: rgba(114, 129, 214, 59);
+}</string>
+                   </property>
+                   <property name="text">
+                    <string>Mediapipe</string>
+                   </property>
+                   <property name="checkable">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
                  </widget>
                 </item>
                 <item>

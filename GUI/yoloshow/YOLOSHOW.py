@@ -132,8 +132,11 @@ class YOLOSHOW(QMainWindow, YOLOSHOWBASE):
         # --- Setting栏 初始化 --- #
 
         # --- MessageBar Init --- #
-        self.showStatus("Welcome to YOLOSHOW")
+        self.showStatus("Welcome to SPD")
         # --- MessageBar Init --- #
+
+        # mediapipe
+        self.ui.mp_button.clicked.connect(self.use_mp)
 
     def initThreads(self):
         self.yolo_threads = YOLOThreadPool()
@@ -142,7 +145,6 @@ class YOLOSHOW(QMainWindow, YOLOSHOWBASE):
         if model_name:
             self.yolo_threads.set(model_name, MODEL_THREAD_CLASSES[model_name]())
             self.initModel(yoloname=model_name)
-
 
     # 导出结果
     def saveResult(self):

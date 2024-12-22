@@ -1305,6 +1305,38 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_22.addWidget(self.Model_QF_2)
 
+        self.widget_10 = QWidget(self.setting_page)
+        self.widget_10.setObjectName(u"widget_10")
+        self.widget_10.setMinimumSize(QSize(260, 90))
+        self.widget_10.setMaximumSize(QSize(260, 90))
+        self.widget_10.setStyleSheet(u"QWidget#widget_10{\n"
+"border:2px solid rgba(255, 255, 255, 70);\n"
+"border-radius:15px;\n"
+"}")
+        self.mp_button = QPushButton(self.widget_10)
+        self.mp_button.setObjectName(u"mp_button")
+        self.mp_button.setGeometry(QRect(20, 10, 150, 40))
+        self.mp_button.setMinimumSize(QSize(150, 40))
+        self.mp_button.setMaximumSize(QSize(100, 40))
+        self.mp_button.setFont(font3)
+        self.mp_button.setAutoFillBackground(False)
+        self.mp_button.setStyleSheet(u"QPushButton{\n"
+"	background-repeat: no-repeat;\n"
+"	background-position: left center;\n"
+"	border: none;	\n"
+"	text-align: left;\n"
+"	padding-left: 40px;\n"
+"	padding-bottom: 4px;\n"
+"	color: white;\n"
+"	font: 700 13pt \"Nirmala UI\";\n"
+"}\n"
+"QPushButton:hover{\n"
+"	background-color: rgba(114, 129, 214, 59);\n"
+"}")
+        self.mp_button.setCheckable(True)
+
+        self.verticalLayout_22.addWidget(self.widget_10)
+
         self.IOU_QF = QFrame(self.setting_page)
         self.IOU_QF.setObjectName(u"IOU_QF")
         self.IOU_QF.setMinimumSize(QSize(260, 90))
@@ -1917,6 +1949,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.ToggleBotton_6.setText(QCoreApplication.translate("MainWindow", u"Model", None))
         self.model_box.setProperty(u"placeholderText", "")
+        self.mp_button.setText(QCoreApplication.translate("MainWindow", u"Mediapipe", None))
         self.ToggleBotton_2.setText(QCoreApplication.translate("MainWindow", u"IOU", None))
         self.ToggleBotton_3.setText(QCoreApplication.translate("MainWindow", u"Confidence", None))
         self.ToggleBotton_4.setText(QCoreApplication.translate("MainWindow", u"Delay(ms)", None))

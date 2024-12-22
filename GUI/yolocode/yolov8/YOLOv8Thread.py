@@ -19,6 +19,8 @@ from yolocode.yolov5.utils.general import increment_path
 from yolocode.yolov8.utils.checks import check_imgsz
 from yolocode.yolov8.utils.torch_utils import select_device
 from concurrent.futures import ThreadPoolExecutor
+# 加入mediapipe v1.1
+import mediapipe as mp
 
 
 class YOLOv8Thread(QThread):
@@ -54,6 +56,15 @@ class YOLOv8Thread(QThread):
         self.parent_workpath = None  # parent work path
         self.executor = ThreadPoolExecutor(max_workers=1)  # 只允许一个线程运行
 
+        # mediapipe 参数设置
+        self.use_mp = True  # 是否使用mediapipe
+        self.mp_hands = None  # mediapipe hands
+        self.mp_pose = None  # mediapipe pose
+        self.mp_face = None  # mediapipe face
+        self.mp_hands_results = None  # mediapipe hands results
+        self.mp_pose_results = None  # mediapipe pose results
+        self.mp_face_results = None  # mediapipe face results
+
         # YOLOv8 参数设置
         self.model = None
         self.data = 'yolocode/yolov8/cfg/datasets/coco.yaml'  # data_dict
@@ -75,11 +86,11 @@ class YOLOv8Thread(QThread):
         self.exist_ok = False
         self.vid_stride = 1  # 视频帧率
         self.max_det = 1000  # 最大检测数
-        self.classes = None  # 指定检测类别  --class 0, or --class 0 2 3
+        self.classes = None  # 指定检测类别
         self.line_thickness = 3
         self.results_picture = dict()  # 结果图片
         self.results_table = list()  # 结果表格
-        self.file_path = None # 文件路径
+        self.file_path = None  # 文件路径
         self.callbacks = defaultdict(list, callbacks.default_callbacks)  # add callbacks
         callbacks.add_integration_callbacks(self)
 
@@ -140,7 +151,6 @@ class YOLOv8Thread(QThread):
                 self.send_result_table.emit(self.results_table)  # 发送表格结果
                 self.results_table = list()
                 # --- 发送图片和表格结果 --- #
-                # 释放资源
                 self.all_labels_dict = {}
                 self.dataset.running = False  # stop flag for Thread
                 # 判断self.dataset里面是否有threads
@@ -153,7 +163,7 @@ class YOLOv8Thread(QThread):
                         try:
                             cap.release()  # release video capture
                         except Exception as e:
-                            LOGGER.warning(f"WARNING ⚠️ Could not release VideoCapture object: {e}")
+                            LOGGER.warning(f"WARNING Could not release VideoCapture object: {e}")
                 cv2.destroyAllWindows()
                 if isinstance(self.vid_writer[-1], cv2.VideoWriter):
                     self.vid_writer[-1].release()
@@ -180,11 +190,35 @@ class YOLOv8Thread(QThread):
 
                 self.vid_cap = self.dataset.cap if self.dataset.mode == "video" else None
 
-                # 原始图片送入 input框
+                if self.use_mp:
+                    # 骨骼画到原始图片上
+                    for i, image in enumerate(im0s):
+                        image.flags.writeable = True
+                        results = self.mp_pose.process(image)
+                        if results.pose_landmarks:
+                            mp.solutions.drawing_utils.draw_landmarks(
+                                image, results.pose_landmarks, mp.solutions.pose.POSE_CONNECTIONS)
+                            # cv2.imshow('MediaPipe Pose', image)
+                            # cv2.waitKey(0)
+                            # cv2.destroyAllWindows()
+                            im0s[i] = image
+                    # 手部画到原始图片上
+                    for i, image in enumerate(im0s):
+                        image.flags.writeable = True
+                        results = self.mp_hands.process(image)
+                        if results.multi_hand_landmarks:
+                            for hand_landmarks in results.multi_hand_landmarks:
+                                mp.solutions.drawing_utils.draw_landmarks(
+                                    image, hand_landmarks, mp.solutions.hands.HAND_CONNECTIONS)
+                        im0s[i] = image
 
+
+
+
+
+                # 原始图片送入 input框
                 self.send_input.emit(im0s if isinstance(im0s, np.ndarray) else im0s[0])
                 count += 1
-                percent = 0  # 进度条
                 # 处理processBar
                 if self.vid_cap:
                     if self.vid_cap.get(cv2.CAP_PROP_FRAME_COUNT) > 0:
@@ -257,7 +291,6 @@ class YOLOv8Thread(QThread):
                             else:
                                 self.all_labels_dict[key] = value
 
-
                     # Send test results
                     self.send_output.emit(self.plotted_img)  # after detection
                     self.send_class_num.emit(class_nums)
@@ -299,7 +332,6 @@ class YOLOv8Thread(QThread):
                         self.vid_writer[-1].release()  # release final video writer
                     break
 
-
     def setup_model(self, model, verbose=True):
         """Initialize YOLO model with given parameters and set it to evaluation mode."""
         self.model = AutoBackend(
@@ -315,6 +347,29 @@ class YOLOv8Thread(QThread):
         self.device = self.model.device  # update device
         self.half = self.model.fp16  # update half
         self.model.eval()
+
+        # 加入mediapipe
+        if self.use_mp:
+            self.mp_hands = mp.solutions.hands.Hands(
+                static_image_mode=False,
+                max_num_hands=2,
+                min_detection_confidence=0.5,
+                min_tracking_confidence=0.5,
+            )
+            self.mp_pose = mp.solutions.pose.Pose(
+                static_image_mode=False,
+                model_complexity=1,
+                enable_segmentation=False,
+                smooth_landmarks=True,
+                min_detection_confidence=0.5,
+                min_tracking_confidence=0.5,
+            )
+            self.mp_face = mp.solutions.face_mesh.FaceMesh(
+                static_image_mode=False,
+                max_num_faces=1,
+                min_detection_confidence=0.5,
+                min_tracking_confidence=0.5,
+            )
 
     def setup_source(self, source):
         """Sets up source and inference mode."""
