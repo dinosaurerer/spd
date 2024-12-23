@@ -2787,13 +2787,13 @@ ComboBox::down-arrow:on {
                   <property name="minimumSize">
                    <size>
                     <width>260</width>
-                    <height>90</height>
+                    <height>80</height>
                    </size>
                   </property>
                   <property name="maximumSize">
                    <size>
                     <width>260</width>
-                    <height>90</height>
+                    <height>80</height>
                    </size>
                   </property>
                   <property name="styleSheet">
@@ -2807,20 +2807,20 @@ border-radius:15px;
                     <rect>
                      <x>20</x>
                      <y>10</y>
-                     <width>150</width>
-                     <height>40</height>
+                     <width>200</width>
+                     <height>60</height>
                     </rect>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>150</width>
-                     <height>40</height>
+                     <width>200</width>
+                     <height>60</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>100</width>
-                     <height>40</height>
+                     <width>200</width>
+                     <height>60</height>
                     </size>
                    </property>
                    <property name="font">

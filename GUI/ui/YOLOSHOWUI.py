@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (QApplication, QDoubleSpinBox, QFrame, QHBoxLayout
 
 from qfluentwidgets import ComboBox
 from ui.utils.UpdateFrame import DoubleClickQFrame
-import YOLOSHOWUI_rc
+import ui.YOLOSHOWUI_rc
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -1307,17 +1307,17 @@ class Ui_MainWindow(object):
 
         self.widget_10 = QWidget(self.setting_page)
         self.widget_10.setObjectName(u"widget_10")
-        self.widget_10.setMinimumSize(QSize(260, 90))
-        self.widget_10.setMaximumSize(QSize(260, 90))
+        self.widget_10.setMinimumSize(QSize(260, 80))
+        self.widget_10.setMaximumSize(QSize(260, 80))
         self.widget_10.setStyleSheet(u"QWidget#widget_10{\n"
 "border:2px solid rgba(255, 255, 255, 70);\n"
 "border-radius:15px;\n"
 "}")
         self.mp_button = QPushButton(self.widget_10)
         self.mp_button.setObjectName(u"mp_button")
-        self.mp_button.setGeometry(QRect(20, 10, 150, 40))
-        self.mp_button.setMinimumSize(QSize(150, 40))
-        self.mp_button.setMaximumSize(QSize(100, 40))
+        self.mp_button.setGeometry(QRect(20, 10, 200, 60))
+        self.mp_button.setMinimumSize(QSize(200, 60))
+        self.mp_button.setMaximumSize(QSize(200, 60))
         self.mp_button.setFont(font3)
         self.mp_button.setAutoFillBackground(False)
         self.mp_button.setStyleSheet(u"QPushButton{\n"

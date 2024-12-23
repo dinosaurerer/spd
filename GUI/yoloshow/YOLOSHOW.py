@@ -5,7 +5,7 @@ from ui.YOLOSHOWUI import Ui_MainWindow
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QFileDialog, QMainWindow
 from yoloshow.YOLOThreadPool import YOLOThreadPool
-from PySide6.QtCore import QTimer, Qt, QPropertyAnimation, QEasingCurve
+from PySide6.QtCore import QTimer, Qt
 from PySide6 import QtCore, QtGui
 from yoloshow.YOLOSHOWBASE import YOLOSHOWBASE, MODEL_THREAD_CLASSES
 
@@ -14,7 +14,7 @@ WIDTH_LEFT_BOX_STANDARD = 80
 WIDTH_LEFT_BOX_EXTENDED = 200
 WIDTH_LOGO = 60
 UI_FILE_PATH = "ui/YOLOSHOWUI.ui"
-KEYS_LEFT_BOX_MENU = ['src_menu', 'src_setting', 'src_webcam', 'src_folder', 'src_camera', 'src_vsmode', 'src_setting']
+KEYS_LEFT_BOX_MENU = ['src_webcam', 'src_folder', 'src_camera', 'src_vsmode']
 
 
 # YOLOSHOW窗口类 动态加载UI文件 和 Ui_mainWindow
@@ -136,6 +136,15 @@ class YOLOSHOW(QMainWindow, YOLOSHOWBASE):
         # --- MessageBar Init --- #
 
         # mediapipe
+        self.mpIcon = QtGui.QIcon()
+        self.mpIcon.addPixmap(QtGui.QPixmap(f"{self.current_workpath}/images/newsize/check_no.png"), QtGui.QIcon.Normal,
+                                QtGui.QIcon.Off)
+        self.mpIcon.addPixmap(QtGui.QPixmap(f"{self.current_workpath}/images/newsize/check_yes.png"), QtGui.QIcon.Active,
+                                QtGui.QIcon.On)
+        self.mpIcon.addPixmap(QtGui.QPixmap(f"{self.current_workpath}/images/newsize/check_yes.png"),
+                                QtGui.QIcon.Selected, QtGui.QIcon.On)
+        self.ui.mp_button.setCheckable(True)
+        self.ui.mp_button.setIcon(self.mpIcon)
         self.ui.mp_button.clicked.connect(self.use_mp)
 
     def initThreads(self):

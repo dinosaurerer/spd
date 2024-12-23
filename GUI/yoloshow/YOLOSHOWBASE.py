@@ -1,11 +1,6 @@
 import random
 
 from utils import glo
-
-glo._init()
-glo.set_value('yoloname', "yolov5 yolov7 yolov8 yolov9 yolov10 yolov11 rtdetr "
-                          "yolov5-seg yolov8-seg yolov11-seg yolov8-pose yolov8-obb yolov11-obb yolov11-pose "
-                          "fastsam sam samv2")
 from utils.logger import LoggerUtils
 import re
 import socket
@@ -21,8 +16,7 @@ from ui.utils.TableView import TableViewQWidget
 from ui.utils.drawFigure import PlottingThread
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtWidgets import QFileDialog, QGraphicsDropShadowEffect, QFrame, QPushButton
-from PySide6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QParallelAnimationGroup, QPoint, QTimer
-from qfluentwidgets import RoundMenu, MenuAnimationType, Action
+from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QParallelAnimationGroup
 import importlib
 from ui.utils.rtspDialog import CustomMessageBox
 from models import common, yolo, experimental
@@ -34,6 +28,10 @@ from yolocode.yolov11.YOLOv11Thread import YOLOv11Thread
 from yolocode.yolov11.YOLOv11SegThread import YOLOv11SegThread
 from yolocode.yolov11.YOLOv11PoseThread import YOLOv11PoseThread
 
+glo._init()
+glo.set_value('yoloname', "yolov8 yolov11"
+                          "yolov8-seg yolov11-seg yolov8-pose yolov8-obb yolov11-obb yolov11-pose"
+                          "")
 
 GLOBAL_WINDOW_STATE = True
 WIDTH_LEFT_BOX_STANDARD = 180
@@ -57,7 +55,7 @@ for key, value in MODEL_NAME_DICT:
     MODEL_THREAD_CLASSES[f"{key}_left"] = value
     MODEL_THREAD_CLASSES[f"{key}_right"] = value
 
-ALL_MODEL_NAMES = ["yolov5", "yolov8", "yolov11"]
+ALL_MODEL_NAMES = ["yolov8", "yolov11"]
 loggertool = LoggerUtils()
 
 
@@ -649,9 +647,7 @@ class YOLOSHOWBASE:
         importlib.reload(yolo)
         importlib.reload(experimental)
 
-
     def use_mp(self, use_mp):
-        # print(f"use_mp: {use_mp}")
         for yolo_thread in self.yolo_threads.threads_pool.values():
             yolo_thread.use_mp = use_mp
 
@@ -777,7 +773,7 @@ class YOLOSHOWBASE:
                             _new_param.data = _old_param.data.clone()
                         net['model'].model[_module_index] = yolov9_detect
                 torch.save(net, ptname)
-        glo.set_value("yoloname", "yolov5 yolov7 yolov8 yolov9 yolov5-seg yolov8-seg rtdetr yolov8-pose")
+        glo.set_value("yoloname", "yolov5 yolov8 yolov5-seg yolov8-seg yolov8-pose")
         self.reloadModel()
 
     # 接受统计结果，然后写入json中

@@ -6,7 +6,6 @@ import numpy as np
 import torch
 from PySide6.QtCore import QThread, Signal
 from pathlib import Path
-
 from yolocode.yolov8.data import load_inference_source
 from yolocode.yolov8.data.augment import classify_transforms, LetterBox
 from yolocode.yolov8.data.utils import IMG_FORMATS, VID_FORMATS
@@ -15,8 +14,7 @@ from yolocode.yolov8.engine.results import Results
 from models.common import AutoBackend
 from yolocode.yolov8.utils import callbacks, ops, LOGGER, colorstr, MACOS, WINDOWS
 from collections import defaultdict
-from yolocode.yolov5.utils.general import increment_path
-from yolocode.yolov8.utils.checks import check_imgsz
+from yolocode.yolov8.utils.checks import check_imgsz, increment_path
 from yolocode.yolov8.utils.torch_utils import select_device
 from concurrent.futures import ThreadPoolExecutor
 # 加入mediapipe v1.1
@@ -40,6 +38,8 @@ class YOLOv8Thread(QThread):
     def __init__(self):
         super(YOLOv8Thread, self).__init__()
         # YOLOSHOW 界面参数设置
+        self.ori_img = None
+        self.results = None
         self.current_model_name = None  # The detection model name to use
         self.new_model_name = None  # Models that change in real time
         self.source = None  # input source
@@ -57,13 +57,9 @@ class YOLOv8Thread(QThread):
         self.executor = ThreadPoolExecutor(max_workers=1)  # 只允许一个线程运行
 
         # mediapipe 参数设置
-        self.use_mp = True  # 是否使用mediapipe
-        self.mp_hands = None  # mediapipe hands
+        self.use_mp = False  # 是否使用mediapipe显示骨骼和手部
         self.mp_pose = None  # mediapipe pose
-        self.mp_face = None  # mediapipe face
-        self.mp_hands_results = None  # mediapipe hands results
         self.mp_pose_results = None  # mediapipe pose results
-        self.mp_face_results = None  # mediapipe face results
 
         # YOLOv8 参数设置
         self.model = None
@@ -123,8 +119,12 @@ class YOLOv8Thread(QThread):
                 self.detect(is_folder_last=is_folder_last)
         else:
             self.setup_source(source)
-            self.send_progress.emit(100)
+            self.go_process()
             self.detect()
+
+    def go_process(self):
+        for i in range(0, 101, 2):
+            self.send_progress.emit(i)
 
     @torch.no_grad()
     def detect(self, is_folder_last=False):
@@ -141,8 +141,6 @@ class YOLOv8Thread(QThread):
                 if self.is_folder and not is_folder_last:
                     break
                 self.send_msg.emit('Stop Detection')
-                if self.webcam:
-                    self.send_msg.emit('Stop Detection and Results Saved')
                 # --- 发送图片和表格结果 --- #
                 self.send_result_picture.emit(self.results_picture)  # 发送图片结果
                 for key, value in self.results_picture.items():
@@ -187,38 +185,30 @@ class YOLOv8Thread(QThread):
                     self.send_msg.emit("Detecting: {}".format(self.source))
                 self.batch = next(datasets)
                 path, im0s, s = self.batch
-
+                self.ori_img = im0s.copy()
                 self.vid_cap = self.dataset.cap if self.dataset.mode == "video" else None
 
-                if self.use_mp:
-                    # 骨骼画到原始图片上
-                    for i, image in enumerate(im0s):
-                        image.flags.writeable = True
-                        results = self.mp_pose.process(image)
-                        if results.pose_landmarks:
+                # 使用mediapipe处理图片
+                for i, image in enumerate(im0s):
+                    black_img = np.zeros(im0s[i].shape, dtype=np.uint8)
+                    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # 转换颜色,opencv默认BGR,mediapipe默认RGB
+                    results = self.mp_pose.process(image)
+                    if results.pose_landmarks:
+                        if self.use_mp:
+                            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
                             mp.solutions.drawing_utils.draw_landmarks(
-                                image, results.pose_landmarks, mp.solutions.pose.POSE_CONNECTIONS)
-                            # cv2.imshow('MediaPipe Pose', image)
-                            # cv2.waitKey(0)
-                            # cv2.destroyAllWindows()
-                            im0s[i] = image
-                    # 手部画到原始图片上
-                    for i, image in enumerate(im0s):
-                        image.flags.writeable = True
-                        results = self.mp_hands.process(image)
-                        if results.multi_hand_landmarks:
-                            for hand_landmarks in results.multi_hand_landmarks:
-                                mp.solutions.drawing_utils.draw_landmarks(
-                                    image, hand_landmarks, mp.solutions.hands.HAND_CONNECTIONS)
-                        im0s[i] = image
-
-
-
-
+                                image, results.pose_landmarks, mp.solutions.pose.POSE_CONNECTIONS,
+                                mp.solutions.drawing_styles.get_default_pose_landmarks_style())
+                            self.ori_img[i] = image
+                        mp.solutions.drawing_utils.draw_landmarks(
+                            black_img, results.pose_landmarks, mp.solutions.pose.POSE_CONNECTIONS,
+                            mp.solutions.drawing_styles.get_default_pose_landmarks_style())
+                        im0s[i] = black_img
 
                 # 原始图片送入 input框
-                self.send_input.emit(im0s if isinstance(im0s, np.ndarray) else im0s[0])
+                self.send_input.emit(self.ori_img if isinstance(self.ori_img, np.ndarray) else self.ori_img[0])
                 count += 1
+
                 # 处理processBar
                 if self.vid_cap:
                     if self.vid_cap.get(cv2.CAP_PROP_FRAME_COUNT) > 0:
@@ -291,7 +281,6 @@ class YOLOv8Thread(QThread):
                             else:
                                 self.all_labels_dict[key] = value
 
-                    # Send test results
                     self.send_output.emit(self.plotted_img)  # after detection
                     self.send_class_num.emit(class_nums)
                     self.send_target_num.emit(target_nums)
@@ -315,7 +304,7 @@ class YOLOv8Thread(QThread):
                     break
 
                 if percent == self.progress_value and not self.webcam:
-                    self.send_progress.emit(100)
+                    self.go_process()
                     self.send_msg.emit('Finish Detection')
                     # --- 发送图片和表格结果 --- #
                     self.send_result_picture.emit(self.results_picture)  # 发送图片结果
@@ -348,28 +337,15 @@ class YOLOv8Thread(QThread):
         self.half = self.model.fp16  # update half
         self.model.eval()
 
-        # 加入mediapipe
-        if self.use_mp:
-            self.mp_hands = mp.solutions.hands.Hands(
-                static_image_mode=False,
-                max_num_hands=2,
-                min_detection_confidence=0.5,
-                min_tracking_confidence=0.5,
-            )
-            self.mp_pose = mp.solutions.pose.Pose(
-                static_image_mode=False,
-                model_complexity=1,
-                enable_segmentation=False,
-                smooth_landmarks=True,
-                min_detection_confidence=0.5,
-                min_tracking_confidence=0.5,
-            )
-            self.mp_face = mp.solutions.face_mesh.FaceMesh(
-                static_image_mode=False,
-                max_num_faces=1,
-                min_detection_confidence=0.5,
-                min_tracking_confidence=0.5,
-            )
+        # 加入mediapipe v1.1
+        self.mp_pose = mp.solutions.pose.Pose(
+            static_image_mode=False,
+            model_complexity=1,
+            enable_segmentation=False,
+            smooth_landmarks=True,
+            min_detection_confidence=0.5,
+            min_tracking_confidence=0.5,
+        )
 
     def setup_source(self, source):
         """Sets up source and inference mode."""
@@ -499,6 +475,9 @@ class YOLOv8Thread(QThread):
         result = results[idx]
         log_string += result.verbose()
         result = results[idx]
+
+        result.orig_img = self.ori_img[idx]
+
         # Add bbox to image
         plot_args = {
             "line_width": self.line_thickness,
