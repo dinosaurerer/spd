@@ -243,7 +243,7 @@ Spacer{
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>SPD</string>
+                <string>Deep learning sitting posture detection based on multimodal datasets</string>
                </property>
                <property name="indent">
                 <number>-1</number>
@@ -457,10 +457,7 @@ QFrame{
                       </size>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">image: url(:/leftbox/icon.png);
-border:2px solid rgba(0,0,0,15%);
-border-radius: 15%;
-</string>
+                      <string notr="true">image: url(:/images/newsize/icon.png/icon.png);</string>
                      </property>
                      <property name="frameShape">
                       <enum>QFrame::Shape::StyledPanel</enum>
@@ -1375,7 +1372,7 @@ QFrame#main_rightbox{
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>:/statusbar/images/newsize/classesBar.png</pixmap>
+                      <pixmap resource="YOLOSHOWUI.qrc">:/statusbar/images/newsize/classesBar.png</pixmap>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -1615,7 +1612,7 @@ font: 17pt &quot;Microsoft YaHei UI&quot;;</string>
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>:/statusbar/images/newsize/targetBar.png</pixmap>
+                      <pixmap resource="YOLOSHOWUI.qrc">:/statusbar/images/newsize/targetBar.png</pixmap>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -1855,7 +1852,7 @@ font: 17pt &quot;Microsoft YaHei UI&quot;;</string>
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>:/statusbar/images/newsize/fpsBar.png</pixmap>
+                      <pixmap resource="YOLOSHOWUI.qrc">:/statusbar/images/newsize/fpsBar.png</pixmap>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -2101,7 +2098,7 @@ font: 17pt &quot;Microsoft YaHei UI&quot;;</string>
                       <string/>
                      </property>
                      <property name="pixmap">
-                      <pixmap>:/statusbar/images/newsize/modelBar.png</pixmap>
+                      <pixmap resource="YOLOSHOWUI.qrc">:/statusbar/images/newsize/modelBar.png</pixmap>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -2370,7 +2367,7 @@ QPushButton:hover{
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset>
+                   <iconset resource="YOLOSHOWUI.qrc">
                     <normaloff>:/rightbox/images/newsize/play.png</normaloff>:/rightbox/images/newsize/play.png</iconset>
                   </property>
                   <property name="iconSize">

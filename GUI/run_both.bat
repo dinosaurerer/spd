@@ -1,11 +1,11 @@
-#!/bin/bash
+@echo off
 
+:: 运行 main.py 打开主程序
+start python main.py
 
-# 运行 main.py 打开主程序
-python main.py &
+:: 运行 mp4.py 播放视频
+start python mp4.py
 
-# 运行 mp4.py 播放视频
-python mp4.py &
+:: 等待所有进程完成
 
-# 等待所有后台进程完成
-wait
+pause

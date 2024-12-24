@@ -15,6 +15,7 @@ sys.path.append(os.path.join(os.getcwd(), "ui"))
 
 # 禁止标准输出
 logging.disable(logging.CRITICAL)  # 禁用所有级别的日志
+sys.stdout = open(os.devnull, 'w')  # 禁用标准输出
 
 
 if __name__ == '__main__':

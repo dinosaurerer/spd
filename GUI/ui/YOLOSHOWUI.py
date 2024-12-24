@@ -267,10 +267,7 @@ class Ui_MainWindow(object):
         self.logo.setSizePolicy(sizePolicy)
         self.logo.setMinimumSize(QSize(60, 60))
         self.logo.setMaximumSize(QSize(60, 60))
-        self.logo.setStyleSheet(u"image: url(:/leftbox/icon.png);\n"
-"border:2px solid rgba(0,0,0,15%);\n"
-"border-radius: 15%;\n"
-"")
+        self.logo.setStyleSheet(u"image: url(:/images/newsize/icon.png/icon.png);")
         self.logo.setFrameShape(QFrame.Shape.StyledPanel)
         self.logo.setFrameShadow(QFrame.Shadow.Raised)
 
@@ -1914,7 +1911,7 @@ class Ui_MainWindow(object):
         self.closeButton.setText("")
         self.minimizeButton.setText("")
         self.maximizeButton.setText("")
-        self.title.setText(QCoreApplication.translate("MainWindow", u"SPD", None))
+        self.title.setText(QCoreApplication.translate("MainWindow", u"Deep learning sitting posture detection based on multimodal datasets", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Rike Fifth", None))
         self.src_img.setText(QCoreApplication.translate("MainWindow", u"Media", None))
         self.src_webcam.setText(QCoreApplication.translate("MainWindow", u" Webcam", None))
