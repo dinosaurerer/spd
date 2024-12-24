@@ -123,7 +123,7 @@ class YOLOv8Thread(QThread):
             self.detect()
 
     def go_process(self):
-        for i in range(0, 101, 2):
+        for i in range(0, 101, 10):
             self.send_progress.emit(i)
 
     @torch.no_grad()
@@ -198,11 +198,11 @@ class YOLOv8Thread(QThread):
                             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
                             mp.solutions.drawing_utils.draw_landmarks(
                                 image, results.pose_landmarks, mp.solutions.pose.POSE_CONNECTIONS,
-                                mp.solutions.drawing_styles.get_default_pose_landmarks_style())
+                                )
                             self.ori_img[i] = image
                         mp.solutions.drawing_utils.draw_landmarks(
                             black_img, results.pose_landmarks, mp.solutions.pose.POSE_CONNECTIONS,
-                            mp.solutions.drawing_styles.get_default_pose_landmarks_style())
+                            )
                         im0s[i] = black_img
 
                 # 原始图片送入 input框
@@ -273,7 +273,7 @@ class YOLOv8Thread(QThread):
                             else:  # 第一次出现的类别
                                 self.labels_dict[label_name] = int(nums)
 
-                    if self.webcam:
+                    if self.webcam or self.is_url:
                         # labels_dict 加入到 all_labels_dict
                         for key, value in self.labels_dict.items():
                             if key in self.all_labels_dict:
@@ -285,7 +285,7 @@ class YOLOv8Thread(QThread):
                     self.send_class_num.emit(class_nums)
                     self.send_target_num.emit(target_nums)
 
-                    if self.webcam:
+                    if self.webcam or self.is_url:
                         self.results_picture = self.all_labels_dict
                     else:
                         self.results_picture = self.labels_dict
@@ -339,10 +339,6 @@ class YOLOv8Thread(QThread):
 
         # 加入mediapipe v1.1
         self.mp_pose = mp.solutions.pose.Pose(
-            static_image_mode=False,
-            model_complexity=1,
-            enable_segmentation=False,
-            smooth_landmarks=True,
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5,
         )
