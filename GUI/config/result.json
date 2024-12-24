@@ -1,3 +1,9 @@
 {
-    "body_left ": 1
+    "body_left ": 61,
+    "body_right ": 61,
+    "left_support_head ": 47,
+    "lying_down ": 45,
+    "normal ": 183,
+    "normals ": 8,
+    "right_support_head ": 139
 }
